@@ -32,7 +32,6 @@ const registroChamada = (req, res, next) => {
     next();
 }
 
-
 //Rota POST para adicionar um produto
 app.post('/produto', registroChamada, validarDados, (req, res) => {
     const produto = req.body;
@@ -71,12 +70,6 @@ app.delete("/excluir/:id", registroChamada, (req, res)=>{
     res.status(200).send("Usuário deletado com sucesso.")
 
 })
-
-
-
-
-
-
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando primeiro mini-projeto em http://localhost${PORT}`)
