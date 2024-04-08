@@ -60,7 +60,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"descricao\":\"Sabor chocolate dark\"\r\n}",
+					"raw": "{\r\n    \"nome\":\"Chocolate Trento\",\r\n    \"preco\":10,\r\n    \"descricao\":\"Sabor Morango\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -97,6 +97,54 @@
 					"path": [
 						"excluir",
 						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Atualizar Parcial",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"descricao\":\"Sabor chocolate Dark\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/atualizar/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"atualizar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Opções de Manipulação",
+			"request": {
+				"method": "OPTIONS",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/produtos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"produtos"
 					]
 				}
 			},

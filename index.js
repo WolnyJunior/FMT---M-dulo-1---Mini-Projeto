@@ -10,7 +10,7 @@ const listaProdutos = []
 //Esquema de validação de dados usando YUP
 const schema = yup.object().shape({
     nome: yup.string().required(),
-    preco: yup.number().positive().integer().required(),
+    preco: yup.number().positive().required(),
     descricao: yup.string().required()
 })
 
@@ -32,6 +32,12 @@ const registroChamada = (req, res, next) => {
     next();
 }
 
+//Rota OPTIONS para listar as opções de manipulação
+app.options('/produtos', registroChamada, (req, res) => {
+    res.setHeader('Allow', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.status(200).send();
+});
+
 //Rota POST para adicionar um produto
 app.post('/produto', registroChamada, validarDados, (req, res) => {
     const produto = req.body;
@@ -42,6 +48,13 @@ app.post('/produto', registroChamada, validarDados, (req, res) => {
 
 //Rota GET para listar os produtos
 app.get('/listar', registroChamada, (req, res) => {
+
+    //Se a lista estiver sem nenhum item, retorna uma mensagem
+    if (listaProdutos == 0) {
+        res.status(404).json({ message: 'Nenhum produto dentro da lista do estoque.' })
+        return
+    }
+    // Retornar a lista de produtos em formato JSON
     res.json(listaProdutos)
 })
 
@@ -54,21 +67,41 @@ app.put("/atualizar/:id", registroChamada, (req, res) => {
         res.status(404).send("Produto não encontrado.")
         return
     }
+    if (!newData.nome || !newData.preco || !newData.descricao) {
+        res.status(400).json({ message: 'Todos os campos (nome, preço, descrição) são obrigatórios' });
+        return
+    }
+    if (typeof newData.preco !== 'number' || newData.preco <= 0) {
+        res.status(400).json({ message: 'O preco deve ser um número positivo.' });
+        return
+    }
     listaProdutos[index] = { ...listaProdutos[index], ...newData }
     res.status(200).send(`Produto atualizado com sucesso.`)
 })
 
+//Rota para atulaizar um item parcialmente, através do ID
+app.patch('/atualizar/:id', registroChamada, (req, res) => {
+    const { id } = req.params
+    const atualizacao = req.body
+    const index = listaProdutos.findIndex(produto => produto.id == parseInt(id))
+    if (index == -1) {
+        res.status(404).json({ message: 'Produto não encontrado' })
+        return
+    }
+    listaProdutos[index] = { ...listaProdutos[index], ...atualizacao };
+    res.status(200).json({ message: 'Produto atualizado parcialmente.', produto: atualizacao })
+})
+
 //Rota para deletar um produto através do ID
-app.delete("/excluir/:id", registroChamada, (req, res)=>{
+app.delete("/excluir/:id", registroChamada, (req, res) => {
     const { id } = req.params
     const index = listaProdutos.findIndex(produto => produto.id == parseInt(id))
     if (index == -1) {
-        res.status(404).send("Usuário não encontrado.")
+        res.status(404).send("Produto não encontrado.")
         return
     }
     listaProdutos.splice(index, 1)
-    res.status(200).send("Usuário deletado com sucesso.")
-
+    res.status(200).send("Produto deletado com sucesso.")
 })
 
 app.listen(PORT, () => {
